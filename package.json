@@ -1,0 +1,52 @@
+{
+  "name": "k8sync-code",
+  "displayName": "k8sync-code",
+  "description": "Show k8sync sync status in the status bar",
+  "version": "0.1.0",
+  "publisher": "krijoh",
+  "engines": {
+    "vscode": "^1.27.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:k8sync.yaml"
+  ],
+  "main": "./out/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.k8sync-sync-toggle",
+        "title": "K8Sync: Toggle sync"
+      },
+      {
+        "command": "extension.k8sync-sync-start",
+        "title": "K8Sync: Start sync"
+      },
+      {
+        "command": "extension.k8sync-sync-stop",
+        "title": "K8Sync: Stop sync"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/fb-watchman": "2.0.0",
+    "@types/mocha": "^2.2.42",
+    "@types/node": "^8.10.25",
+    "tslint": "^5.8.0",
+    "typescript": "3.0.3",
+    "vscode": "^1.1.21"
+  },
+  "dependencies": {
+    "@trym-testing/k8sync": "0.0.1-alpha.3",
+    "figures": "2.0.0"
+  }
+}
