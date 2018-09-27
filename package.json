@@ -2,7 +2,7 @@
   "name": "k8sync-code",
   "displayName": "k8sync-code",
   "description": "Show k8sync sync status in the status bar",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "publisher": "krijoh",
   "engines": {
     "vscode": "^1.27.0"
