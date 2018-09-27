@@ -1,6 +1,6 @@
 import { Syncer, Config } from "k8sync";
 import { StatusBarItem } from "vscode";
-import { circle, circleDotted, play, tick, circleCross } from "figures";
+import { circle, tick, circleCross } from "figures";
 
 const events = [
   "started",
