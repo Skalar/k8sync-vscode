@@ -46,7 +46,7 @@
     "vscode": "^1.1.21"
   },
   "dependencies": {
-    "@trym-testing/k8sync": "0.0.1-alpha.3",
-    "figures": "2.0.0"
+    "figures": "2.0.0",
+    "k8sync": "1.0.2"
   }
 }
