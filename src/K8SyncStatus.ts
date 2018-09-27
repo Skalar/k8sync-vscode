@@ -40,6 +40,8 @@ class K8SyncStatus {
       return;
     }
     this.syncing = true;
+    this.status.text = "K8: ...";
+    this.status.show();
     try {
       await this.syncer.start();
       for (const event of events) {
