@@ -2,7 +2,6 @@ import * as vscode from "vscode";
 import { Syncer } from "k8sync";
 import events from "../syncerEvents";
 import { circleCross, circleDotted, play, tick } from "figures";
-import { TargetPod } from "k8sync/lib/types";
 
 export default class Provider
   implements vscode.TreeDataProvider<ServiceItem | PodItem> {

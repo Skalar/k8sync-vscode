@@ -26,18 +26,40 @@
     },
     "commands": [
       {
-        "command": "extension.k8sync-sync-toggle",
+        "command": "k8sync.sync-toggle",
         "title": "K8Sync: Toggle sync"
       },
       {
-        "command": "extension.k8sync-sync-start",
-        "title": "K8Sync: Start sync"
+        "command": "k8sync.sync-start",
+        "title": "K8Sync: Start sync",
+        "icon": {
+          "dark": "resources/dark/start.svg",
+          "light": "resources/light/start.svg"
+        }
       },
       {
-        "command": "extension.k8sync-sync-stop",
-        "title": "K8Sync: Stop sync"
+        "command": "k8sync.sync-stop",
+        "title": "K8Sync: Stop sync",
+        "icon": {
+          "dark": "resources/dark/stop.svg",
+          "light": "resources/light/stop.svg"
+        }
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "k8sync.sync-start",
+          "when": "view == k8sync-code-service-explorer && k8sync-syncing == false",
+          "group": "navigation"
+        },
+        {
+          "command": "k8sync.sync-stop",
+          "when": "view == k8sync-code-service-explorer && k8sync-syncing == true",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
