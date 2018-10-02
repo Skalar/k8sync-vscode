@@ -15,6 +15,15 @@
   ],
   "main": "./out/extension",
   "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "k8sync-code-service-explorer",
+          "name": "K8Sync",
+          "when": "k8syncEnabled"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "extension.k8sync-sync-toggle",
