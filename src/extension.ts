@@ -29,7 +29,7 @@ export async function activate(context: ExtensionContext) {
 
   syncer = await createSyncer(files[0].path);
   provider = new Provider(syncer);
-  status.command = "extension.k8sync-sync-toggle";
+  status.command = "k8sync.sync-toggle";
   setupCommands(context);
 
   k8sync = new K8SyncStatus(syncer, status);
@@ -43,7 +43,7 @@ export function deactivate() {
 
 function setupCommands(context: ExtensionContext) {
   context.subscriptions.push(
-    commands.registerCommand("extension.k8sync-sync-toggle", () => {
+    commands.registerCommand("k8sync.sync-toggle", () => {
       if (syncing) {
         stopSyncing();
       } else {
@@ -52,12 +52,12 @@ function setupCommands(context: ExtensionContext) {
     })
   );
   context.subscriptions.push(
-    commands.registerCommand("extension.k8sync-sync-start", () => {
+    commands.registerCommand("k8sync.sync-start", () => {
       startSyncing();
     })
   );
   context.subscriptions.push(
-    commands.registerCommand("extension.k8sync-sync-stop", () => {
+    commands.registerCommand("k8sync.sync-stop", () => {
       stopSyncing();
     })
   );
@@ -67,6 +67,7 @@ async function startSyncing() {
   await syncer.start();
   syncing = true;
   k8sync.start();
+  commands.executeCommand("setContext", "k8sync-syncing", true);
 }
 
 async function stopSyncing() {
@@ -74,6 +75,7 @@ async function stopSyncing() {
   syncing = false;
   k8sync.stop();
   provider.updateItemLabels(true);
+  commands.executeCommand("setContext", "k8sync-syncing", false);
 }
 
 async function createSyncer(configFile: string): Promise<Syncer> {
