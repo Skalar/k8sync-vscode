@@ -1,15 +1,26 @@
 {
-  "rules": {
-    "no-string-throw": true,
-    "no-unused-expression": true,
-    "no-duplicate-variable": true,
-    "curly": true,
-    "class-name": true,
-    "semicolon": false,
-    "triple-equals": true
-  },
-  "defaultSeverity": "warning",
   "linterOptions": {
-    "exclude": ["**/*.js", "node_modules/**/*"]
+    "exclude": ["**/*.js"]
+  },
+  "extends": "tslint:recommended",
+  "rules": {
+    "semicolon": [true, "never", "ignore-interfaces"],
+    "quotemark": [true, "single"],
+    "trailing-comma": [true, "ignore-interfaces"],
+    "object-literal-sort-keys": false,
+    "interface-name": false,
+    "type-literal-delimiter": false,
+    "arrow-parens": false,
+    "no-console": false,
+    "curly": [true, "ignore-same-line"],
+    "max-line-length": [
+      true,
+      {
+        "ignore": "comments",
+        "limit": 100
+      }
+    ],
+    "object-literal-key-quotes": [true, "as-needed"],
+    "no-unused-variable": [true, { "ignore-pattern": "^_" }]
   }
 }

@@ -1,81 +1,71 @@
-import { Syncer } from "k8sync";
-import { StatusBarItem } from "vscode";
-import { circle, tick, circleCross } from "figures";
-import events from "./syncerEvents";
+import { circle, circleCross, tick } from 'figures'
+import { Syncer } from 'k8sync'
+import { StatusBarItem } from 'vscode'
+import events from './syncerEvents'
 
 class K8SyncStatus {
-  private syncing: boolean;
+  private syncing: boolean
 
   constructor(private syncer: Syncer, private status: StatusBarItem) {
-    this.syncing = false;
+    this.syncing = false
 
-    this.renderStatus();
+    this.renderStatus()
   }
 
-  async start() {
+  public async start() {
     if (this.syncing) {
-      return;
+      return
     }
-    this.syncing = true;
-    this.status.text = "K8: ...";
-    this.status.show();
+    this.syncing = true
+    this.status.text = 'K8: ...'
+    this.status.show()
 
     for (const event of events) {
-      this.syncer.on(event, () => this.renderStatus(event));
-      this.syncer.on("disconnect", () => this.stop());
+      this.syncer.on(event, () => this.renderStatus(event))
+      this.syncer.on('stopped', () => this.stop())
     }
   }
 
-  async stop() {
-    this.syncing = false;
-    this.renderStatus();
+  public async stop() {
+    this.syncing = false
+    this.renderStatus()
   }
 
-  renderStatus(event?: string) {
-    console.log(`${event} triggered render`);
-    let text = "K8: ";
-    let serviceCount = 0;
-    let completedCount = 0;
+  public renderStatus(event?: string) {
+    let text = 'K8: '
+    let serviceCount = 0
+    let completedCount = 0
     if (this.syncing) {
-      const syncer = this.syncer;
-      for (const [specName] of Object.entries(syncer.syncSpecs)) {
-        serviceCount++;
-        const pods = this.syncer.targetPods[specName];
-        const podNames = Array.from(pods).map(pod => pod.name);
+      const syncer = this.syncer
+      for (const targetName of Object.keys(syncer.syncSpecs)) {
+        serviceCount++
+        const pods = this.syncer.targetPods[targetName]
 
-        if (pods.size === 0) {
-          // text += ` ${specName}: ${circleDotted}`;
-        } else {
-          if (
-            podNames.find(
-              podName =>
-                typeof syncer.syncLocks[podName] !== "undefined" ||
-                typeof syncer.syncQueue[podName] !== "undefined"
-            )
-          ) {
-            // nothing now
-          } else {
-            completedCount++;
+        for (const pod of pods) {
+          if (pod.previousSync) {
+            if (!pod.previousSync.error) {
+              completedCount++
+            }
           }
         }
       }
     }
 
     if (serviceCount === 0) {
-      text += circle;
+      text += circle
     } else if (completedCount !== 0) {
-      text += `${completedCount}/${serviceCount} ${tick}`;
+      text += `${completedCount}/${serviceCount} ${tick}`
     } else {
-      text += circleCross;
+      text += circleCross
     }
 
-    this.status.text = text;
-    this.status.show();
+    this.status.text = text
+    this.status.show()
   }
 
   public destroy() {
-    this.syncer.stop();
+    this.syncer.stop()
   }
 }
 
-export default K8SyncStatus;
+export default K8SyncStatus

@@ -1,1 +1,2 @@
-export { default as Provider, ServiceItem } from "./Provider";
+export { default as Provider } from './Provider'
+export { default as SyncTarget } from './SyncTarget'
