@@ -4,6 +4,9 @@
   "description": "Show k8sync sync status in the status bar",
   "version": "0.2.1",
   "publisher": "krijoh",
+  "repository": {
+    "url": "https://github.com/Skalar/k8sync-vscode"
+  },
   "engines": {
     "vscode": "^1.27.0"
   },

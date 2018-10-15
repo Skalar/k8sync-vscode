@@ -10,14 +10,29 @@ import {
   window,
   workspace,
 } from 'vscode'
-import syncerEvents, {SyncerEvents} from './syncerEvents'
 import TreeProvider from './TreeProvider'
+import {ExtensionControllerState, SyncerEvents} from './types'
 
 const frame = elegantSpinner()
+const events = [
+  'running',
+  'syncStarted',
+  'syncCompleted',
+  'syncError',
+  'podAdded',
+  'podDeleted',
+] as Array<
+  | 'running'
+  | 'syncStarted'
+  | 'syncCompleted'
+  | 'syncError'
+  | 'podAdded'
+  | 'podDeleted'
+>
 
 class ExtensionController {
   public syncer: Syncer
-  public syncing: boolean = false
+  public state: ExtensionControllerState = ExtensionControllerState.Stopped
   public iconPrefix: string
 
   protected output: OutputChannel = window.createOutputChannel('k8sync')
@@ -32,11 +47,12 @@ class ExtensionController {
   }
 
   public async startSync(showInfo: boolean = true) {
-    if (this.syncing) {
+    if (this.state !== ExtensionControllerState.Stopped) {
+      this.log('Syncer must be stopped for it to be able to start', 'warning')
       return
     }
     this.log('Starting sync')
-    this.syncing = true
+    this.state = ExtensionControllerState.Starting
     try {
       await this.syncer.start()
       commands.executeCommand('setContext', 'k8sync-syncing', true)
@@ -47,18 +63,19 @@ class ExtensionController {
       this.log('Error in starting sync:')
       this.log(e)
       this.log(e, 'error')
-      this.syncing = false
+      this.state = ExtensionControllerState.Stopped
     }
-    this.syncing = true
+    this.state = ExtensionControllerState.Running
     commands.executeCommand('setContext', 'k8sync-syncing', true)
   }
 
   public async stopSync(showInfo: boolean = true) {
-    if (!this.syncing) {
+    if (this.state !== ExtensionControllerState.Running) {
+      this.log('Must be running to be able to stop', 'warning')
       return
     }
     this.log('Stopping sync')
-    this.syncing = true
+    this.state = ExtensionControllerState.Stopping
     try {
       await this.syncer.stop()
       commands.executeCommand('setContext', 'k8sync-syncing', true)
@@ -69,16 +86,16 @@ class ExtensionController {
       this.log('Error in stopping sync:')
       this.log(e)
       this.log(e, 'error')
-      this.syncing = true
+      this.state = ExtensionControllerState.Running
     }
-    this.syncing = false
+    this.state = ExtensionControllerState.Stopped
     this.setStatus('dash')
     this.treeProvider.refresh()
     commands.executeCommand('setContext', 'k8sync-syncing', false)
   }
 
   public async restartTargets() {
-    if (!this.syncing) {
+    if (this.state !== ExtensionControllerState.Running) {
       this.log('Sync needs to be active to restart targets', 'warning')
       return
     }
@@ -86,7 +103,7 @@ class ExtensionController {
     this.log('Restarting targets')
 
     try {
-      window.withProgress(
+      await window.withProgress(
         {
           title: 'K8: Restarting targets',
           location: ProgressLocation.Notification,
@@ -180,7 +197,7 @@ class ExtensionController {
     }
     this.syncer = new Syncer(this.config)
 
-    syncerEvents.forEach(event =>
+    events.forEach(event =>
       this.syncer.on(event, data => this.syncerEvent(event, data))
     )
   }
@@ -252,7 +269,7 @@ class ExtensionController {
   protected syncerError(error: Error) {
     this.log(error.message)
     this.log(error.message, 'error')
-    this.syncing = false
+    this.state = ExtensionControllerState.Stopped
     this.setStatus('flame', {color: 'red'})
     setTimeout(() => this.setStatus('primitive-square'), 1000)
   }

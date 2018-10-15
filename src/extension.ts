@@ -1,5 +1,6 @@
 import {commands, ExtensionContext} from 'vscode'
 import ExtensionController from './ExtensionController'
+import {ExtensionControllerState} from './types'
 
 require('promise.prototype.finally').shim() // tslint:disable-line
 
@@ -13,14 +14,14 @@ export async function activate(context: ExtensionContext) {
 }
 
 export async function deactivate() {
-  commands.executeCommand('setContext', 'k8syncEnabled', this.syncing)
+  commands.executeCommand('setContext', 'k8syncEnabled', false)
   controller.stopSync()
 }
 
 function setupCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand('k8sync.sync-toggle', () => {
-      if (controller.syncing) {
+      if (controller.state === ExtensionControllerState.Running) {
         controller.stopSync()
       } else {
         controller.startSync()

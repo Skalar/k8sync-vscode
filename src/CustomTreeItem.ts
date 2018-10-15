@@ -1,5 +1,6 @@
 import {TreeItem, TreeItemCollapsibleState} from 'vscode'
 import ExtensionController from './ExtensionController'
+import {ExtensionControllerState} from './types'
 
 class CustomTreeItem extends TreeItem {
   constructor(
@@ -16,7 +17,7 @@ class CustomTreeItem extends TreeItem {
   }
 
   get iconPath() {
-    if (!this.controller.syncing) {
+    if (this.controller.state === ExtensionControllerState.Stopped) {
       return {
         dark: `${this.controller.iconPrefix}/dark/stop.svg`,
         light: `${this.controller.iconPrefix}/light/stop.svg`,
