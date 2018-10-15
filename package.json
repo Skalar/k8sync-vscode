@@ -1,6 +1,6 @@
 {
   "name": "k8sync-code",
-  "displayName": "k8sync-code",
+  "displayName": "k8sync",
   "description": "Show k8sync sync status in the status bar",
   "version": "0.2.1",
   "publisher": "krijoh",
@@ -44,6 +44,14 @@
           "dark": "resources/dark/stop.svg",
           "light": "resources/light/stop.svg"
         }
+      },
+      {
+        "command": "k8sync.restart-targets",
+        "title": "K8Sync: Restart targets",
+        "icon": {
+          "dark": "resources/dark/restart.svg",
+          "light": "resources/light/restart.svg"
+        }
       }
     ],
     "menus": {
@@ -57,8 +65,30 @@
           "command": "k8sync.sync-stop",
           "when": "view == k8sync-code-service-explorer && k8sync-syncing == true",
           "group": "navigation"
+        },
+        {
+          "command": "k8sync.restart-targets",
+          "when": "view == k8sync-code-service-explorer",
+          "group": "navigation"
         }
       ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "K8sync configuration",
+      "properties": {
+        "k8sync.autoStart": {
+          "type": "boolean",
+          "default": false,
+          "description": "If k8sync should automatically start sync on boot"
+        },
+        "k8sync.configValues": {
+          "type": "object",
+          "default": {},
+          "description": "Values to overwrite in k8sync.yaml file before loading configuration",
+          "markdownDescription": ""
+        }
+      }
     }
   },
   "scripts": {
@@ -77,6 +107,7 @@
     "vscode": "^1.1.21"
   },
   "dependencies": {
+    "elegant-spinner": "1.0.1",
     "figures": "2.0.0",
     "k8sync": "2.0.1",
     "promise.prototype.finally": "3.1.0",
