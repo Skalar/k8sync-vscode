@@ -1,5 +1,5 @@
 import * as elegantSpinner from 'elegant-spinner'
-import {Config, Syncer} from 'k8sync'
+import {Config, Syncer, TargetPod} from 'k8sync'
 import {
   commands,
   ExtensionContext,
@@ -109,14 +109,30 @@ class ExtensionController {
           location: ProgressLocation.Notification,
           cancellable: false,
         },
-        () => {
-          return this.syncer.restartSyncTargets()
+        progress => {
+          let restartedPods = 0
+          const pods = Array.from(
+            Object.values(this.syncer.targetPods).reduce(
+              (sum, next) => sum.concat(Array.from(next)),
+              []
+            )
+          ) as TargetPod[]
+
+          const podsPromises = pods.map(pod =>
+            this.syncer.restartPod(pod).then(() => {
+              restartedPods++
+              progress.report({increment: (restartedPods / pods.length) * 100})
+            })
+          )
+
+          return Promise.all(podsPromises)
         }
       )
 
       this.log('K8: Restarting complete')
       this.log('K8: Restarting complete', 'info')
     } catch (e) {
+      console.error(e)
       this.log(
         e && e.message
           ? `K8: ${e.message}`
