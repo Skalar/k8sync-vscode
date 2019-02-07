@@ -2,8 +2,6 @@ import {commands, ExtensionContext} from 'vscode'
 import ExtensionController from './ExtensionController'
 import {ExtensionControllerState} from './types'
 
-require('promise.prototype.finally').shim() // tslint:disable-line
-
 let controller: ExtensionController
 
 export async function activate(context: ExtensionContext) {
