@@ -2,7 +2,7 @@
   "name": "k8sync-code",
   "displayName": "k8sync",
   "description": "Show k8sync sync status in the status bar",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "publisher": "krijoh",
   "repository": {
     "url": "https://github.com/Skalar/k8sync-vscode"
