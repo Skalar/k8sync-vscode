@@ -4,16 +4,13 @@ import {ExtensionControllerState} from './types'
 
 class CustomTreeItem extends TreeItem {
   constructor(
-    public label: string,
+    public id: string,
+    public podLabel: string,
     public collapsibleState: TreeItemCollapsibleState,
     private controller: ExtensionController,
     private isPod: boolean = false
   ) {
-    super(label, collapsibleState)
-  }
-
-  get id() {
-    return this.label
+    super(podLabel, collapsibleState)
   }
 
   get iconPath() {
@@ -24,8 +21,8 @@ class CustomTreeItem extends TreeItem {
       }
     }
     const isFinished = this.isPod
-      ? this.controller.isPodFinishedSyncing(this.label)
-      : this.controller.isTargetFinishedSyncing(this.label)
+      ? this.controller.isPodFinishedSyncing(this.id)
+      : this.controller.isTargetFinishedSyncing(this.id)
 
     if (isFinished) {
       return {

@@ -157,10 +157,12 @@ class ExtensionController {
   public isTargetFinishedSyncing(name) {
     let finished = true
 
-    for (const pod of this.syncer.targetPods[name]) {
-      if (!pod.hasBeenSynced || pod.activeSync) {
-        finished = false
-        break
+    if (this.syncer.targetPods[name]) {
+      for (const pod of this.syncer.targetPods[name]) {
+        if (!pod.hasBeenSynced || pod.activeSync) {
+          finished = false
+          break
+        }
       }
     }
 
@@ -238,7 +240,7 @@ class ExtensionController {
         this.treeProvider.refresh()
         break
       case 'syncError':
-        //
+        this.syncerError(eventData)
         this.treeProvider.refresh()
         break
     }

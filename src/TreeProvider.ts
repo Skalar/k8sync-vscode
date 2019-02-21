@@ -43,6 +43,9 @@ export default class Provider implements TreeDataProvider<CustomTreeItem> {
       for (const pod of pods) {
         const treeItem = new CustomTreeItem(
           pod.podName,
+          pod.containerGuessed
+            ? `${pod.podName} (${pod.containerName})`
+            : pod.podName,
           TreeItemCollapsibleState.None,
           this.controller,
           true
@@ -51,14 +54,32 @@ export default class Provider implements TreeDataProvider<CustomTreeItem> {
       }
     } else {
       for (const specName of Object.keys(this.syncer.syncSpecs)) {
+        let containerGuessed = false
+        if (this.syncer.targetPods[specName]) {
+          for (const pod of this.syncer.targetPods[specName]) {
+            containerGuessed = pod.containerGuessed
+            if (containerGuessed) {
+              break
+            }
+          }
+        }
+        // console.log(this.syncer.targetPods[specName])
+        // const containerGuessed =
+        //   this.syncer.targetPods[specName] &&
+        //   !!Object.values(this.syncer.targetPods[specName]).find(
+        //     pod => pod.containerGuessed
+        //   )
+
         const treeItem = new CustomTreeItem(
           specName,
+          containerGuessed ? `${specName} ?` : specName,
           this.syncer.targetPods[specName] &&
           this.syncer.targetPods[specName].size > 0
             ? TreeItemCollapsibleState.Collapsed
             : TreeItemCollapsibleState.None,
           this.controller
         )
+
         children.push(treeItem)
       }
     }
